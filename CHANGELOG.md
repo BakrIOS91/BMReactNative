@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- `WithViewState` bottom sheet: dimmed and blurred backdrop (`backdropColor`, `backdropBlur`, optional `expo-blur`), native-style corner radius (`sheetBorderRadius`, default 28) and a grabber.
+- Fix: loader overlay no longer relies on `StyleSheet.absoluteFillObject`, which React Native 0.88 removed.
+
 ## 0.1.0
 
 Initial React Native port of BMFlutter 0.1.11 and BMRootJailbreakSniffer 1.1.5.

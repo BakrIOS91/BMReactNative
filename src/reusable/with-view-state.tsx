@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useState } from 'react';
+import { ComponentType, ReactNode, useEffect, useState } from 'react';
 import { ActivityIndicator, Modal, Pressable, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import type { ViewState } from '../helpers/view-state';
 import { ErrorView } from './error-view';
@@ -23,6 +23,23 @@ export interface WithViewStateProps {
   renderLoader?: () => ReactNode;
   /** Background of the bottom sheet. */
   sheetBackgroundColor?: string;
+  /** Top corner radius of the bottom sheet. Default 28, like native iOS and Material 3 sheets. */
+  sheetBorderRadius?: number;
+  /** Dim colour behind the bottom sheet. Default `rgba(0,0,0,0.4)`. */
+  backdropColor?: string;
+  /**
+   * Blur intensity (0-100) behind the bottom sheet, default 20; 0 disables.
+   * Needs the optional `expo-blur` peer, otherwise only the dim colour shows.
+   */
+  backdropBlur?: number;
+}
+
+function loadBlurView(): ComponentType<any> | undefined {
+  try {
+    return require('expo-blur').BlurView;
+  } catch {
+    return undefined;
+  }
 }
 
 const noop = () => {};
@@ -57,6 +74,9 @@ export function WithViewState({
   renderError,
   renderLoader,
   sheetBackgroundColor = '#FFFFFF',
+  sheetBorderRadius = 28,
+  backdropColor = 'rgba(0,0,0,0.4)',
+  backdropBlur = 20,
 }: WithViewStateProps) {
   const [dismissedType, setDismissedType] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
@@ -68,6 +88,7 @@ export function WithViewState({
 
   const errorState = viewState.isError ? viewState : undefined;
   const errorNode = errorState ? (renderError ? renderError(errorState, retryAction) : defaultError(errorState)) : null;
+  const Blur = errorState && errorDisplayMode === 'bottomSheet' ? loadBlurView() : undefined;
   const loader = renderLoader ? renderLoader() : <ActivityIndicator />;
 
   const hideContent = errorDisplayMode === 'replace' && !!errorState;
@@ -112,8 +133,23 @@ export function WithViewState({
           visible={dismissedType !== errorState.type}
           onRequestClose={() => setDismissedType(errorState.type)}
         >
-          <Pressable style={styles.backdrop} onPress={() => setDismissedType(errorState.type)} />
-          <View style={[styles.sheet, { backgroundColor: sheetBackgroundColor }]}>{errorNode}</View>
+          <Pressable
+            style={[styles.backdrop, { backgroundColor: backdropColor }]}
+            onPress={() => setDismissedType(errorState.type)}
+          >
+            {Blur && backdropBlur > 0 ? (
+              <Blur intensity={backdropBlur} tint="default" style={StyleSheet.absoluteFill} pointerEvents="none" />
+            ) : null}
+          </Pressable>
+          <View
+            style={[
+              styles.sheet,
+              { backgroundColor: sheetBackgroundColor, borderTopLeftRadius: sheetBorderRadius, borderTopRightRadius: sheetBorderRadius },
+            ]}
+          >
+            <View style={styles.grabber} />
+            {errorNode}
+          </View>
         </Modal>
       ) : null}
     </View>
@@ -126,5 +162,6 @@ const styles = StyleSheet.create({
   hidden: { display: 'none' },
   overlay: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, alignItems: 'center', justifyContent: 'center' },
   backdrop: { flex: 1 },
-  sheet: { borderTopLeftRadius: 20, borderTopRightRadius: 20, overflow: 'hidden', minHeight: 240 },
+  sheet: { overflow: 'hidden', minHeight: 240 },
+  grabber: { alignSelf: 'center', width: 36, height: 5, borderRadius: 3, marginTop: 8, backgroundColor: 'rgba(128,128,128,0.45)' },
 });

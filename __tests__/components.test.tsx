@@ -7,6 +7,8 @@ import { WithViewState } from '../src/reusable/with-view-state';
 import { FontKey, FontRegistry } from '../src/design/font-helper';
 import { ViewState } from '../src/helpers/view-state';
 
+jest.mock('expo-blur', () => ({ BlurView: (p: any) => require('react').createElement('BlurView', p) }), { virtual: true });
+
 const render = (el: JSX.Element) => {
   let r!: TestRenderer.ReactTestRenderer;
   act(() => { r = TestRenderer.create(el); });
@@ -133,6 +135,11 @@ describe('WithViewState', () => {
     const r = render(<WithViewState viewState={ViewState.noData()} errorDisplayMode="bottomSheet"><Child /></WithViewState>);
     expect(r.root.findAllByType('Modal' as any)).toHaveLength(1);
     expect(r.root.findAllByType(Child)).toHaveLength(1);
+    const backdrop = flat(r.root.findByType('Pressable' as any).props.style);
+    expect(backdrop.backgroundColor).toBe('rgba(0,0,0,0.4)');
+    expect(r.root.findByType('BlurView' as any).props.intensity).toBe(20);
+    const sheet = flat(r.root.findByType('Modal' as any).findAllByType('View' as any).find((v) => flat(v.props.style).minHeight)!.props.style);
+    expect(sheet.borderTopLeftRadius).toBe(28);
     act(() => { r.root.findByType('Pressable' as any).props.onPress(); });
     expect(r.root.findAllByType('Modal' as any)).toHaveLength(0);
     act(() => { r.update(<WithViewState viewState={ViewState.loaded} errorDisplayMode="bottomSheet"><Child /></WithViewState>); });
@@ -140,6 +147,12 @@ describe('WithViewState', () => {
     expect(r.root.findAllByType('Modal' as any)).toHaveLength(1);
     act(() => { r.root.findByType('Modal' as any).props.onRequestClose(); });
     expect(r.root.findAllByType('Modal' as any)).toHaveLength(0);
+  });
+
+  it('backdrop blur can be disabled and colour changed', () => {
+    const r = render(<WithViewState viewState={ViewState.noData()} errorDisplayMode="bottomSheet" backdropBlur={0} backdropColor="red"><Child /></WithViewState>);
+    expect(r.root.findAllByType('BlurView' as any)).toHaveLength(0);
+    expect(flat(r.root.findByType('Pressable' as any).props.style).backgroundColor).toBe('red');
   });
 
   it('pull to refresh calls retryAction and toggles refreshing', async () => {
