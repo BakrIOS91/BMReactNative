@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "name": "BM React Native Example",
+    "slug": "bm-react-native-example",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "ios": { "supportsTablet": true, "bundleIdentifier": "com.bm.reactnative.example" },
+    "android": { "package": "com.bm.reactnative.example" }
+  }
+}

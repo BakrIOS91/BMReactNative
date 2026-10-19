@@ -1,0 +1,12 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application
+        android:zygotePreloadName="com.emrys.rjsniffer.rjsniffer.AppZygotePreload">
+
+        <service
+            android:name="com.emrys.rjsniffer.rjsniffer.Sniffer"
+            android:exported="false"
+            android:isolatedProcess="true"
+            android:useAppZygote="true" />
+    </application>
+</manifest>

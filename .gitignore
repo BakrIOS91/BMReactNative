@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+coverage/
+*.tgz
+
+# Expo / React Native (example app)
+.expo/
+example/ios/
+example/android/
+example/dist/
+web-build/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Claude Code local settings
+.claude/settings.local.json
+**/.claude/settings.local.json
+
+# Native build output
+android/build/
+android/.cxx/
+ios/build/
