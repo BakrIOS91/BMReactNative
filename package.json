@@ -1,6 +1,6 @@
 {
   "name": "bm-react-native",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "React Native helpers ported from BMFlutter: device scaling, typography registry, view states, reactive persisted preferences, reusable buttons / error views and device security checks.",
   "license": "Apache-2.0",
   "author": "BakrIOS91",
@@ -36,11 +36,21 @@
     "react-native-fs": ">=2.20.0"
   },
   "peerDependenciesMeta": {
-    "@react-native-async-storage/async-storage": { "optional": true },
-    "expo-blur": { "optional": true },
-    "expo-secure-store": { "optional": true },
-    "jail-monkey": { "optional": true },
-    "react-native-fs": { "optional": true }
+    "@react-native-async-storage/async-storage": {
+      "optional": true
+    },
+    "expo-blur": {
+      "optional": true
+    },
+    "expo-secure-store": {
+      "optional": true
+    },
+    "jail-monkey": {
+      "optional": true
+    },
+    "react-native-fs": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",
