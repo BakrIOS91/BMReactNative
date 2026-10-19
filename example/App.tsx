@@ -59,6 +59,9 @@ export default function App() {
   const token = usePreference(prefs.token);
   const [ready, setReady] = useState(false);
   const [viewState, setViewState] = useState<ViewState>(ViewState.loaded);
+  const [sheetVisible, setSheetVisible] = useState(true);
+  const [backdrop, setBackdrop] = useState(true);
+  const [grabber, setGrabber] = useState(true);
   const [mode, setMode] = useState<'replace' | 'bottomSheet'>('replace');
   const [security, setSecurity] = useState<SecurityCheckResult | string>('checking…');
   const [log, setLog] = useState<string[]>([]);
@@ -115,12 +118,23 @@ export default function App() {
         <Section title="WithViewState">
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: scale(6) }}>
             {states.map(([name, s]) => (
-              <UnderlinedButton key={name} title={name} color="#0a84ff" onPress={() => setViewState(s)} />
+              <UnderlinedButton key={name} title={name} color="#0a84ff" onPress={() => { setViewState(s); setSheetVisible(true); }} />
             ))}
+            <UnderlinedButton title={`drawer: ${sheetVisible ? 'shown' : 'hidden'}`} color="#30d158" onPress={() => setSheetVisible((v) => !v)} />
+            <UnderlinedButton title={`background: ${backdrop ? 'dim+blur' : 'none'}`} color="#30d158" onPress={() => setBackdrop((v) => !v)} />
+            <UnderlinedButton title={`grabber: ${grabber ? 'on' : 'off'}`} color="#30d158" onPress={() => setGrabber((v) => !v)} />
             <UnderlinedButton title={`mode: ${mode}`} color="#ff9f0a" onPress={() => setMode((m) => (m === 'replace' ? 'bottomSheet' : 'replace'))} />
           </View>
           <View style={{ height: scale(220), marginTop: scale(8), borderRadius: scale(12), overflow: 'hidden', backgroundColor: '#fff' }}>
-            <WithViewState viewState={viewState} errorDisplayMode={mode} retryAction={() => setViewState(ViewState.loaded)}>
+            <WithViewState
+              viewState={viewState}
+              errorDisplayMode={mode}
+              sheetVisible={sheetVisible}
+              onSheetDismiss={() => setSheetVisible(false)}
+              showGrabber={grabber}
+              backdropColor={backdrop ? undefined : 'transparent'}
+              backdropBlur={backdrop ? undefined : 0}
+              retryAction={() => setViewState(ViewState.loaded)}>
               <ErrorView title="Content" message="Loaded content lives here" image={null} />
             </WithViewState>
           </View>
