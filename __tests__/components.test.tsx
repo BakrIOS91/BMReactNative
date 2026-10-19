@@ -139,7 +139,8 @@ describe('WithViewState', () => {
     expect(backdrop.backgroundColor).toBe('rgba(0,0,0,0.4)');
     expect(r.root.findByType('BlurView' as any).props.intensity).toBe(20);
     const sheet = flat(r.root.findByType('Modal' as any).findAllByType('View' as any).find((v) => flat(v.props.style).minHeight)!.props.style);
-    expect(sheet.borderTopLeftRadius).toBe(28);
+    expect(sheet.borderTopLeftRadius).toBe(38);
+    expect(r.root.findAllByType('View' as any).filter((n) => flat(n.props.style).width === 36)).toHaveLength(1);
     act(() => { r.root.findByType('Pressable' as any).props.onPress(); });
     expect(r.root.findAllByType('Modal' as any)).toHaveLength(0);
     act(() => { r.update(<WithViewState viewState={ViewState.loaded} errorDisplayMode="bottomSheet"><Child /></WithViewState>); });
@@ -153,6 +154,23 @@ describe('WithViewState', () => {
     const r = render(<WithViewState viewState={ViewState.noData()} errorDisplayMode="bottomSheet" backdropBlur={0} backdropColor="red"><Child /></WithViewState>);
     expect(r.root.findAllByType('BlurView' as any)).toHaveLength(0);
     expect(flat(r.root.findByType('Pressable' as any).props.style).backgroundColor).toBe('red');
+  });
+
+  it('sheet can be controlled, dismissed with a callback and drawn without grabber', () => {
+    const onDismiss = jest.fn();
+    const el = (visible?: boolean) => (
+      <WithViewState viewState={ViewState.noData()} errorDisplayMode="bottomSheet" sheetVisible={visible} onSheetDismiss={onDismiss} showGrabber={false} sheetBorderRadius={12}>
+        <Child />
+      </WithViewState>
+    );
+    const r = render(el(false));
+    expect(r.root.findAllByType('Modal' as any)).toHaveLength(0);
+    act(() => { r.update(el(true)); });
+    expect(r.root.findAllByType('Modal' as any)).toHaveLength(1);
+    expect(r.root.findAllByType('View' as any).filter((n) => flat(n.props.style).width === 36)).toHaveLength(0);
+    act(() => { r.root.findByType('Pressable' as any).props.onPress(); });
+    expect(onDismiss).toHaveBeenCalledTimes(1);
+    expect(r.root.findAllByType('Modal' as any)).toHaveLength(1); // still controlled by the prop
   });
 
   it('pull to refresh calls retryAction and toggles refreshing', async () => {

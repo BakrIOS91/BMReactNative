@@ -1,5 +1,5 @@
 import { ComponentType, ReactNode, useEffect, useState } from 'react';
-import { ActivityIndicator, Modal, Pressable, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Modal, Platform, Pressable, RefreshControl, ScrollView, StyleSheet, View } from 'react-native';
 import type { ViewState } from '../helpers/view-state';
 import { ErrorView } from './error-view';
 
@@ -23,8 +23,17 @@ export interface WithViewStateProps {
   renderLoader?: () => ReactNode;
   /** Background of the bottom sheet. */
   sheetBackgroundColor?: string;
-  /** Top corner radius of the bottom sheet. Default 28, like native iOS and Material 3 sheets. */
+  /** Top corner radius of the bottom sheet. Default 38 on iOS and 28 on Android, like native sheets. */
   sheetBorderRadius?: number;
+  /**
+   * Controls the bottom sheet from outside: `true` shows it, `false` hides it.
+   * Leave undefined to let it show on error and close on backdrop tap / back.
+   */
+  sheetVisible?: boolean;
+  /** Called when the user dismisses the sheet (backdrop tap or Android back). */
+  onSheetDismiss?: () => void;
+  /** Show the drag handle at the top of the sheet. Default true. */
+  showGrabber?: boolean;
   /** Dim colour behind the bottom sheet. Default `rgba(0,0,0,0.4)`. */
   backdropColor?: string;
   /**
@@ -74,7 +83,10 @@ export function WithViewState({
   renderError,
   renderLoader,
   sheetBackgroundColor = '#FFFFFF',
-  sheetBorderRadius = 28,
+  sheetBorderRadius = Platform.OS === 'ios' ? 38 : 28,
+  sheetVisible,
+  onSheetDismiss,
+  showGrabber = true,
   backdropColor = 'rgba(0,0,0,0.4)',
   backdropBlur = 20,
 }: WithViewStateProps) {
@@ -90,6 +102,11 @@ export function WithViewState({
   const errorNode = errorState ? (renderError ? renderError(errorState, retryAction) : defaultError(errorState)) : null;
   const Blur = errorState && errorDisplayMode === 'bottomSheet' ? loadBlurView() : undefined;
   const loader = renderLoader ? renderLoader() : <ActivityIndicator />;
+
+  const dismissSheet = () => {
+    if (errorState) setDismissedType(errorState.type);
+    onSheetDismiss?.();
+  };
 
   const hideContent = errorDisplayMode === 'replace' && !!errorState;
   const content = isRefreshable ? (
@@ -130,12 +147,12 @@ export function WithViewState({
         <Modal
           transparent
           animationType="slide"
-          visible={dismissedType !== errorState.type}
-          onRequestClose={() => setDismissedType(errorState.type)}
+          visible={sheetVisible ?? dismissedType !== errorState.type}
+          onRequestClose={dismissSheet}
         >
           <Pressable
             style={[styles.backdrop, { backgroundColor: backdropColor }]}
-            onPress={() => setDismissedType(errorState.type)}
+            onPress={dismissSheet}
           >
             {Blur && backdropBlur > 0 ? (
               <Blur intensity={backdropBlur} tint="default" style={StyleSheet.absoluteFill} pointerEvents="none" />
@@ -147,7 +164,7 @@ export function WithViewState({
               { backgroundColor: sheetBackgroundColor, borderTopLeftRadius: sheetBorderRadius, borderTopRightRadius: sheetBorderRadius },
             ]}
           >
-            <View style={styles.grabber} />
+            {showGrabber ? <View style={styles.grabber} /> : null}
             {errorNode}
           </View>
         </Modal>

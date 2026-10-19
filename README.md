@@ -78,7 +78,7 @@ setViewState(ViewState.customError({ title: 'Oops', message: '...', onPress: ret
 </WithViewState>
 ```
 
-In `bottomSheet` mode the content is dimmed (`backdropColor`) and blurred (`backdropBlur`, needs the optional `expo-blur` peer; without it only the dim shows). The sheet has native-style rounded top corners (`sheetBorderRadius`, default 28) and a grabber.
+In `bottomSheet` mode the content is dimmed (`backdropColor`) and blurred (`backdropBlur`, needs the optional `expo-blur` peer; without it only the dim shows). The sheet has native-style rounded top corners (`sheetBorderRadius`, default 38 on iOS / 28 on Android) and a grabber (`showGrabber`). Show or hide the sheet yourself with `sheetVisible` and react to taps with `onSheetDismiss`.
 
 States: `loading`, `overlayLoading(color)`, `loaded`, and the errors `noNetwork`, `noData`, `serverError`, `unexpectedError`, `unauthorized`, `forceUpdate`, `jailBroken`, `searchError`, `customError` (`state.isError` is `true`). Without `renderError`, a plain English `ErrorView` is shown, so supply it to localise texts, pick images and wire per-state actions (login, exit, store update).
 
