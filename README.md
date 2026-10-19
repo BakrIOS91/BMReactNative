@@ -1,27 +1,24 @@
 # BMReactNative
 
-React Native helpers ported from the Flutter packages **BMFlutter** and **BMRootJailbreakSniffer** (bloc / riverpod helpers are intentionally left out). Written in TypeScript; works with Expo (dev client) and bare React Native.
+A TypeScript toolkit of React Native helpers for building consistent, resilient apps: responsive scaling, typography, view-state handling, buttons, typed preferences and device-security checks. Works with Expo (dev client) and bare React Native.
 
 ```bash
 npm install bm-react-native
 ```
 
-Optional peers (install what you use): `@react-native-async-storage/async-storage` and `expo-secure-store` (preferences), `jail-monkey` and `react-native-fs` (extra security checks). The sniffer needs a native rebuild (`pod install` on iOS); it does not run in Expo Go.
+Optional peers (install what you use): `@react-native-async-storage/async-storage` and `expo-secure-store` (preferences), `expo-blur` (sheet backdrop blur), `jail-monkey` and `react-native-fs` (extra security checks). The sniffer needs a native rebuild (`pod install` on iOS); it does not run in Expo Go.
 
-| Flutter | React Native |
+## What's included
+
+| Area | Exports |
 |---|---|
-| `DeviceHelper.getScalingFactor(context)` | `useScalingFactor()` / `useScaleValue()` |
-| `DeviceRegistry.registerReferenceWidth` | same |
-| `FontKey` / `FontRegistry` / `FontHelper.style` | same, plus `useFontStyle()` |
-| `FontWeightProtocol` | `{ weightValue: number }` |
-| `SupportedLocale` / `LanguageManager` | same |
-| `ViewState` / `WithViewState` / `ErrorView` / `CustomError` | same (`ViewState` is a plain union with factories) |
-| `AppCupertinoButton.filled/outlined` | `AppButton.filled/outlined` |
-| `UnderlinedButton` | same |
-| `@GeneratePreferences` + `BasePreferences` | `BasePreferences` with `userDefault` / `secure` / `inApp` fields (no codegen) |
-| `preferencesListener` | `usePreferenceListener` |
-| `DeviceSecurityHelper` / `Rjsniffer` | same |
-| `emptyBlocListener`, SVG `.vec` builder | not ported |
+| Scaling | `useScalingFactor()`, `useScaleValue()`, `DeviceRegistry.registerReferenceWidth` |
+| Typography | `FontKey`, `FontRegistry`, `FontHelper.style`, `useFontStyle()`, `{ weightValue: number }` weights |
+| Localisation | `SupportedLocale`, `LanguageManager` |
+| View state | `ViewState`, `WithViewState`, `ErrorView`, `CustomError` |
+| Buttons | `AppButton.filled` / `AppButton.outlined`, `UnderlinedButton` |
+| Preferences | `BasePreferences` with `userDefault` / `secure` / `inApp` fields, `usePreference`, `usePreferenceListener`, `MemoryStorage` |
+| Security | `DeviceSecurityHelper`, `Rjsniffer` |
 
 ## Scaling
 
@@ -58,6 +55,8 @@ function Title() {
 `lineHeight` is a multiplier of the scaled font size (React Native needs an absolute value, so it is converted for you).
 
 ## ViewState and WithViewState
+
+`ViewState` is a plain union with factories. `WithViewState` renders the right UI for the current state.
 
 ```tsx
 const [viewState, setViewState] = useState<ViewState>(ViewState.loading);
@@ -141,7 +140,7 @@ The Android and iOS sniffer code derives from [root_jailbreak_sniffer](https://g
 
 ## Testing
 
-`npm test` (Jest, `react-test-renderer`). The native Android / iOS code is a direct port and has not been compiled in this repository; verify it in an app build before releasing.
+`npm test` (Jest, `react-test-renderer`). The native Android / iOS code has not been compiled in this repository; verify it in an app build before releasing.
 
 ## Example app
 
