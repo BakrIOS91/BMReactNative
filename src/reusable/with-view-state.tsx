@@ -164,7 +164,7 @@ export function WithViewState({
               ]}
             >
               {/* The shadow lives on the outer view; clipping to the radius happens here. */}
-              <View style={{ overflow: 'hidden', borderTopLeftRadius: sheetBorderRadius, borderTopRightRadius: sheetBorderRadius }}>
+              <View style={{ flexGrow: 1, overflow: 'hidden', borderTopLeftRadius: sheetBorderRadius, borderTopRightRadius: sheetBorderRadius }}>
                 {showGrabber ? <View style={styles.grabber} /> : null}
                 {errorNode}
               </View>
