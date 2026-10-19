@@ -150,22 +150,25 @@ export function WithViewState({
           visible={sheetVisible ?? dismissedType !== errorState.type}
           onRequestClose={dismissSheet}
         >
-          <Pressable
-            style={[styles.backdrop, { backgroundColor: backdropColor }]}
-            onPress={dismissSheet}
-          >
-            {Blur && backdropBlur > 0 ? (
-              <Blur intensity={backdropBlur} tint="default" style={StyleSheet.absoluteFill} pointerEvents="none" />
-            ) : null}
-          </Pressable>
-          <View
-            style={[
-              styles.sheet,
-              { backgroundColor: sheetBackgroundColor, borderTopLeftRadius: sheetBorderRadius, borderTopRightRadius: sheetBorderRadius },
-            ]}
-          >
-            {showGrabber ? <View style={styles.grabber} /> : null}
-            {errorNode}
+          <View style={styles.sheetRoot}>
+            {/* Full-screen so the dim / blur also covers the area beside the rounded corners. */}
+            <Pressable style={[StyleSheet.absoluteFill, { backgroundColor: backdropColor }]} onPress={dismissSheet}>
+              {Blur && backdropBlur > 0 ? (
+                <Blur intensity={backdropBlur} tint="default" style={StyleSheet.absoluteFill} pointerEvents="none" />
+              ) : null}
+            </Pressable>
+            <View
+              style={[
+                styles.sheet,
+                { backgroundColor: sheetBackgroundColor, borderTopLeftRadius: sheetBorderRadius, borderTopRightRadius: sheetBorderRadius },
+              ]}
+            >
+              {/* The shadow lives on the outer view; clipping to the radius happens here. */}
+              <View style={{ overflow: 'hidden', borderTopLeftRadius: sheetBorderRadius, borderTopRightRadius: sheetBorderRadius }}>
+                {showGrabber ? <View style={styles.grabber} /> : null}
+                {errorNode}
+              </View>
+            </View>
           </View>
         </Modal>
       ) : null}
@@ -178,7 +181,14 @@ const styles = StyleSheet.create({
   grow: { flexGrow: 1 },
   hidden: { display: 'none' },
   overlay: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, alignItems: 'center', justifyContent: 'center' },
-  backdrop: { flex: 1 },
-  sheet: { overflow: 'hidden', minHeight: 240 },
+  sheetRoot: { flex: 1, justifyContent: 'flex-end' },
+  sheet: {
+    minHeight: 240,
+    shadowColor: '#000000',
+    shadowOpacity: 0.25,
+    shadowRadius: 16,
+    shadowOffset: { width: 0, height: -4 },
+    elevation: 24,
+  },
   grabber: { alignSelf: 'center', width: 36, height: 5, borderRadius: 3, marginTop: 8, backgroundColor: 'rgba(128,128,128,0.45)' },
 });

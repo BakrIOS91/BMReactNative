@@ -3,6 +3,7 @@
 ## Unreleased
 
 - `WithViewState` bottom sheet: dimmed and blurred backdrop (`backdropColor`, `backdropBlur`, optional `expo-blur`), native-style corner radius (`sheetBorderRadius`, default 38 iOS / 28 Android), a grabber (`showGrabber`) and controlled visibility (`sheetVisible`, `onSheetDismiss`).
+- Bottom sheet: shadow, and the dim / blur now covers the whole screen (previously the un-dimmed app showed beside the rounded corners).
 - Fix: loader overlay no longer relies on `StyleSheet.absoluteFillObject`, which React Native 0.88 removed.
 
 ## 0.1.0
