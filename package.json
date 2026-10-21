@@ -1,6 +1,6 @@
 {
   "name": "bm-react-native",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "React Native helpers ported from BMFlutter: device scaling, typography registry, view states, reactive persisted preferences, reusable buttons / error views and device security checks.",
   "license": "Apache-2.0",
   "author": "BakrIOS91",
@@ -11,6 +11,7 @@
   "files": [
     "src",
     "dist",
+    "scripts",
     "android",
     "ios",
     "BMReactNative.podspec",
@@ -24,7 +25,8 @@
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:coverage": "jest --coverage",
-    "prepublishOnly": "npm run typecheck && npm test && npm run build"
+    "prepublishOnly": "npm run typecheck && npm test && npm run build",
+    "verify": "npm run typecheck && jest --coverage && npm run build"
   },
   "peerDependencies": {
     "@react-native-async-storage/async-storage": ">=1.19.0",
@@ -67,5 +69,8 @@
     "type": "git",
     "url": "git+https://github.com/BakrIOS91/BMReactNative.git"
   },
-  "homepage": "https://github.com/BakrIOS91/BMReactNative#readme"
+  "homepage": "https://github.com/BakrIOS91/BMReactNative#readme",
+  "bin": {
+    "bm-react-native-env": "scripts/bm-env.js"
+  }
 }

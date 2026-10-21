@@ -19,6 +19,10 @@ export * from './helpers/preferences/storage';
 export * from './helpers/device-security/device-security';
 export * from './helpers/device-security/rjsniffer';
 
+// Reactor (state + actions + effects) and dependency injection
+export * from './reactor';
+export * from './di';
+
 // UI components
 export * from './reusable/app-button';
 export * from './reusable/underlined-button';
